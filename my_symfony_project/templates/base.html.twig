@@ -13,5 +13,13 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} mt-2">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
     </body>
 </html>
