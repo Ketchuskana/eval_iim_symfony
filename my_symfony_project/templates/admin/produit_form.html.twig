@@ -1,0 +1,11 @@
+{# templates/admin/produit_form.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ editMode ? 'Modifier' : 'Créer' }} un produit</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-success">{{ editMode ? 'Modifier' : 'Créer' }}</button>
+    {{ form_end(form) }}
+{% endblock %}

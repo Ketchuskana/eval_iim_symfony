@@ -31,4 +31,12 @@ class UserController extends AbstractController
             'profileForm' => $form->createView(),
         ]);
     }
+    #[Route('/profil', name: 'app_profil')]
+    public function profil(): Response
+    {
+        $user = $this->getUser();
+        return $this->render('user/profil.html.twig', [
+            'notifications' => $user->getNotifications(),
+        ]);
+    }
 }
