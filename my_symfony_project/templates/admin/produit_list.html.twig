@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des produits{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Liste des produits</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Catégorie</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produit in produits %}
+                    <tr>
+                        <td>{{ produit.nom }}</td>
+                        <td>{{ produit.prix }} €</td>
+                        <td>{{ produit.category }}</td>
+                        <td>
+                            <a href="{{ path('produit_edit', {id: produit.id}) }}" class="btn btn-sm btn-primary me-2">Modifier</a>
+
+                            <a href="{{ path('produit_delete', {id: produit.id}) }}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Supprimer ce produit ?');">
+                                Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">Aucun produit trouvé.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-end">
+            <a href="{{ path('produit_create') }}" class="btn btn-success">Ajouter un produit</a>
+        </div>
+    </div>
+{% endblock %}

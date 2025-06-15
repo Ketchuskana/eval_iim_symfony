@@ -9,6 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\UserProfileForm; 
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\UserRepository;
+use App\Entity\User;
 
 class UserController extends AbstractController
 {
@@ -37,6 +39,15 @@ class UserController extends AbstractController
         $user = $this->getUser();
         return $this->render('user/profil.html.twig', [
             'notifications' => $user->getNotifications(),
+        ]);
+    }
+    #[Route('/user/list', name: 'admin_user_list')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function listUsers(UserRepository $userRepository): Response
+    {
+        $users = $userRepository->findAll();
+        return $this->render('admin/user_list.html.twig', [
+            'users' => $users,
         ]);
     }
 }

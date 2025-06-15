@@ -29,9 +29,21 @@ final class ProduitController extends AbstractController
         ]);
     }
 
+    #[Route('/produit/list', name: 'list_produit')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function list(ProduitRepository $produitRepository): Response
+    {
+        $produits = $produitRepository->findAll();
+
+        return $this->render('admin/produit_list.html.twig', [
+            'produits' => $produits,
+        ]);
+        
+    }
+
     #[Route('/produit/{id}/edit', name: 'produit_edit')]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Produit $produit, EntityManagerInterface $entityManager, MessageBusInterface $bus): Response
+    public function edit(Request $request, Produit $produit, EntityManagerInterface $entityManager, MessageBusInterface $bus, UserRepository $userRepo ): Response 
     {
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
@@ -39,13 +51,13 @@ final class ProduitController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            $adminUsers = $userRepo->findByRole('ROLE_ADMIN');
+            $adminUsers = $userRepo->findAdmins();
             foreach ($adminUsers as $admin) {
                 $bus->dispatch(new SendMessage($admin->getId(), "Produit modifié : {$produit->getNom()}"));
             }
 
             $this->addFlash('success', 'Produit modifié');
-            return $this->redirectToRoute('app_produit_index');
+            return $this->redirectToRoute('list_produit');
         }
 
         return $this->render('produit/edit.html.twig', [
@@ -53,6 +65,7 @@ final class ProduitController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
 
     #[Route('/produit/{id}/delete', name: 'produit_delete')]
     #[IsGranted('ROLE_ADMIN')]
@@ -62,7 +75,7 @@ final class ProduitController extends AbstractController
         $em->flush();
 
         $this->addFlash('success', 'Produit supprimé.');
-        return $this->redirectToRoute('app_produit');
+        return $this->redirectToRoute('list_produit');
     }
 
 
@@ -79,7 +92,7 @@ final class ProduitController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Produit ajouté avec succès.');
-            return $this->redirectToRoute('app_produit');
+            return $this->redirectToRoute('list_produit');
         }
 
         return $this->render('admin/produit_form.html.twig', [
@@ -90,7 +103,7 @@ final class ProduitController extends AbstractController
 
     
     #[Route('/produit/{id}/acheter', name: 'produit_acheter')]
-    public function acheter(Produit $produit, EntityManagerInterface $em, MessageBusInterface $bus): Response
+    public function acheter(Produit $produit, EntityManagerInterface $em, MessageBusInterface $bus,  UserRepository $userRepo ): Response
     {
         $user = $this->getUser();
         if (!$user) {

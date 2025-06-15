@@ -57,4 +57,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+public function findAdmins(): array
+{
+    return array_filter(
+        $this->findAll(),
+        fn(User $user) => in_array('ROLE_ADMIN', $user->getRoles())
+    );
+}
+
 }

@@ -2,17 +2,31 @@
 <h2>Liste des utilisateurs</h2>
 <table>
     <tr>
-        <th>Nom</th><th>Actif</th><th>Action</th>
+        <th>Prenm</th>
+        <th>Nom</th>
+        <th>Points</th>
+        <th>Actif</th>
+        <th>Action</th>
     </tr>
     {% for user in users %}
         <tr>
-            <td>{{ user.nom }} {{ user.prenom }}</td>
+            <td>{{ user.prenom }}</td>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.points }}</td>
+
+
             <td>{{ user.actif ? 'Oui' : 'Non' }}</td>
             <td>
                 <a href="{{ path('admin_user_toggle', {id: user.id}) }}">
                     {{ user.actif ? 'Désactiver' : 'Activer' }}
                 </a>
             </td>
+        </tr>
+        <tr>
+            <a href="{{ path('admin_add_bonus') }}" 
+                onclick="return confirm('Êtes-vous sûr de vouloir ajouter 1000 points à tous les utilisateurs actifs ?');">
+                Ajouter 1000 points à tous les utilisateurs actifs
+            </a>
         </tr>
     {% endfor %}
 </table>
